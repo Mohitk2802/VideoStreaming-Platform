@@ -1,0 +1,210 @@
+{% extends 'yt1/base.html' %}
+
+{% block css %}
+<style>
+    #leftfix {
+        display: none;
+    }
+
+    #videok>video {
+        width: 50vmax;
+        border-radius: 11px;
+    }
+
+    #videok {
+        display: flex;
+        justify-content: center;
+    }
+
+    #videoplaying {
+        width: 50vmax;
+        margin-left: 4.6vmax;
+        margin-right: 30px;
+    }
+
+    #channel>img {
+        width: 45px;
+        border-radius: 25px;
+        padding: 5.9px;
+        margin-right: 5px;
+    }
+
+    #channel {
+        display: flex;
+        align-items: center;
+    }
+
+    #disc {
+        padding: 10px;
+        background-color: rgb(7, 7, 7);
+        border-radius: 11px;
+    }
+
+    #more {
+        color: rgba(88, 88, 245, 0.881);
+        cursor: pointer;
+    }
+
+    #playvids {
+        display: flex;
+    }
+
+    #functions {
+        margin-left: 30px;
+        display: flex;
+    }
+
+    .xyz {
+        border: none;
+        cursor: pointer;
+        min-width: 3.6vmax;
+        height: 3.6vmax;
+        border-radius: 6px;
+        background-color: rgba(112, 110, 110, 0.799);
+        font-size: .7rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    #wl{
+        border: none;
+        cursor: pointer;
+        min-width: 3.6vmax;
+        height: 3.6vmax;
+        border-radius: 6px;
+        background-color: rgba(112, 110, 110, 0.799);
+        font-size: .7rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block js%}
+
+<script>
+    $(document).ready(function () {
+        $('#likeform').submit(function (event) {
+            event.preventDefault();
+            var formdata = new FormData(this);
+            $.ajax({
+                type: 'POST',
+                url: '/like',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                encode: true,
+                dataType: 'json',
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                }
+            })
+                .done(function (data) {
+                    if (data.like) {
+                        $('#like').css('background-color', 'blue');
+                        $('#dislike').css('background-color', 'rgba(112, 110, 110, 0.799)');
+                    }
+                    if(data.dislike){
+                        $('#dislike').css('background-color', 'blue');
+                        $('#like').css('background-color', 'rgba(112, 110, 110, 0.799)');
+                    }
+                    if(data.none){
+                        $('#dislike').css('background-color', 'rgba(112, 110, 110, 0.799)');
+                        $('#like').css('background-color', 'rgba(112, 110, 110, 0.799)');
+                    }
+                })
+                .fail(function (xhr, textStatus, errorThrown) {
+                    console.log("Error:", textStatus, errorThrown);
+                });
+        });
+    });
+
+    $(document).ready(function () {
+        $('#dislikeform').submit(function (event) {
+            event.preventDefault();
+            var formdata = new FormData(this);
+            $.ajax({
+                type: 'POST',
+                url: '/dislike',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                encode: true,
+                dataType: 'json',
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                }
+            })
+                .done(function (data) {
+                    if (data.like) {
+                        $('#like').css('background-color', 'blue');
+                        $('#dislike').css('background-color', 'rgba(112, 110, 110, 0.799)');
+                    }
+                    if(data.dislike){
+                        $('#dislike').css('background-color', 'blue');
+                        $('#like').css('background-color', 'rgba(112, 110, 110, 0.799)');
+                    }
+                    if(data.none){
+                        $('#dislike').css('background-color', 'rgba(112, 110, 110, 0.799)');
+                        $('#like').css('background-color', 'rgba(112, 110, 110, 0.799)');
+                    }
+                })
+                .fail(function (xhr, textStatus, errorThrown) {
+                    console.log("Error:", textStatus, errorThrown);
+                });
+        });
+    });
+</script>
+
+{% endblock %}
+
+{% block right %}
+<div id="playvids">
+    <div id="videoplaying">
+        <div id="videok">
+            <video controls autoplay auto metadata none>
+                <source src="{{mainvideo.video.url}}">
+            </video>
+        </div>
+        <div id="title">{{mainvideo.video_title}}</div>
+        <a style="text-decoration: none;" href="/channel/{{mainvideo.cid.slug}}">
+            <div id="channel">
+                <img src="{{mainvideo.cid.channel_image.url}}">
+                <div>{{mainvideo.cid.channel_name}}</div>
+            </div>
+        </a>
+        <div id="disc">
+            <p>{{mainvideo.video_disc|truncatewords:26}} <span id="more">more</span></p>
+        </div>
+        <div id="comments">
+
+        </div>
+    </div>
+    <div id="functions">
+        <form id="likeform" action="/like">
+            {% csrf_token %}
+            <input type="hidden" value="{{mainvideo.slug}}" name="slug">
+            {% if like %}
+            <button id="like" class="xyz" type="submit" style="margin-right: .5rem; margin-left: .5rem; background-color: blue;">Like</button>
+            {% else %}
+            <button id="like" class="xyz" type="submit" style="margin-right: .5rem; margin-left: .5rem;">Like</button>
+            {% endif %}
+        </form>
+        <form id="dislikeform" action="/dislike">
+            {% csrf_token %}
+            <input type="hidden" value="{{mainvideo.slug}}" name="slug">
+            {% if dislike %}
+            <button id="dislike" class="xyz" type="submit" style="margin-right: .5rem; margin-left: .5rem; background-color: blue;">DisLike</button>
+            {% else %}
+            <button id="dislike" class="xyz" type="submit" style="margin-right: .5rem; margin-left: .5rem;">DisLike</button>
+            {% endif %}
+        </form>
+        <div id="wl" style="margin-left: 1.5rem;">Watch_Later</div>
+
+    </div>
+
+</div>
+{% endblock %}

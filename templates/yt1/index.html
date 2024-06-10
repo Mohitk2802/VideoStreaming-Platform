@@ -1,0 +1,66 @@
+{% extends 'yt1/base.html' %}
+
+{% block title %} Index {% endblock title %}
+
+{% block css%}
+<style>
+    #rightfix {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(24vmax, 1fr));
+        gap: 16px;
+    }
+
+    #videosdiv {
+        margin: 1rem;
+        transition: all .5s;
+    }
+
+    #videosdiv>img {
+        width: 380px;
+        height: 200px;
+        border-radius: 12px;
+        transition: all .5s;
+    }
+
+    #videosdiv>div {
+        padding: 1rem;
+    }
+
+    #videosdiv:hover {
+        cursor: pointer;
+        transition: all .5s;
+        transform: translateY(-7px);
+    }
+
+    #videosdiv:hover>img {
+        transition: all .5s;
+        border-radius: 0px;
+    }
+
+    #anker {
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+
+{% block right %}
+{% for video in videos %}
+<a id="anker" href="/play/{{video.slug}}">
+    <div id="videosdiv">
+        <img src="{{video.video_thumbnail.url}}">
+        {{video.video_duration}}
+        <div>
+            <div>{{video.video_title}}</div>
+            <div>{{video.upload_time|timesince}}</div>
+            <div>{{video.cid}}</div>
+            {% if video.cid.uid == request.user %}
+            <span>Your Video</span>
+            {% else %}
+            {% endif %}
+
+        </div>
+    </div>
+</a>
+{% endfor %}
+{% endblock %}

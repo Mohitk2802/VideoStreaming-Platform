@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/show_channel.css' %}">
+    <script>
+        $(document).ready(function () {
+            $('#vdform').submit(function (event) {
+                event.preventDefault();
+                var formdata = new FormData(this);
+                $.ajax({
+                    type: 'POST',
+                    url: '/uplodevideo/g',
+                    data: formdata,
+                    processData: false,
+                    contentType: false,
+                    encode: true,
+                    dataType: 'json'
+                })
+
+                    .done(function (data) {
+                        console.log("Hello");
+                        if (data.uplode) {
+                            $('#vdmodel').modal('hide');
+                            x = ' <div id="videosdiv"><img src='+data.thumbnail+'><div><div>'+data.title+'</div><div>'+data.duration+'</div><div>'+data.cname+'</div></div></div>'
+                            $('#videos').append(x);
+                        }
+                    })
+                    .fail(function (xhr, status, error) {
+                            console.error("Error:", error);
+                    });
+            });
+        });
+
+
+        $(document).ready(function () {
+            $('#pvdform').submit(function (event) {
+                event.preventDefault();
+                var formdata = new FormData(this);
+                $.ajax({
+                    type: 'POST',
+                    url: '/uplodevideo/p',
+                    data: formdata,
+                    processData: false,
+                    contentType: false,
+                    encode: true,
+                    dataType: 'json'
+                })
+
+                    .done(function (data) {
+                        console.log("Hello");
+                        if (data.uplode) {
+                            $('#pvdmodel').modal('hide');
+                            x = ' <div id="videosdiv"><img src='+data.thumbnail+'><div><div>'+data.title+'</div><div>'+data.duration+'</div><div>'+data.cname+'</div></div></div>'
+                            $('#videos').append(x);
+                        }
+                    })
+                    .fail(function (xhr, status, error) {
+                            console.error("Error:", error);
+                    });
+            });
+        });
+
+        $(document).ready(function () {
+            $('#numberform').submit(function (event) {
+                event.preventDefault();
+                var formdata = new FormData(this);
+                $.ajax({
+                    type: 'POST',
+                    url: '/uplodenumber',
+                    data: formdata,
+                    processData: false,
+                    contentType: false,
+                    encode: true,
+                    dataType: 'json'
+                })
+
+                    .done(function (data) {
+                        console.log("Hello");
+                        if (data.pcc) {
+                            $('#numbers').modal('hide');
+                            x = '<div id="msg">'+data.msg+' <button id="remove">X</button></div>'
+                            $('#message').append(x);
+                        }
+                    })
+                    .fail(function (xhr, status, error) {
+                            console.error("Error:", error);
+                    });
+            });
+        });
+        $(document).on('click', '#remove', function() {
+        $(this).parent().hide();
+        });
+    </script>
+</head>
+
+<body>
+    <div id="message">
+
+    </div>
+    <section id="sec1">
+        <div id="sec1d1">
+            <img src="{{cimg}}">
+        </div>
+        <div id="sec1d2">
+            <div>User_Name : {{username}}</div>
+            <div>Channel_Name : {{cname}}</div>
+            <div>Discription : {{cdisc}}</div>
+        </div>
+    </section>
+    <section id="sec2">
+        {% if pcc %}
+        <div>
+            <button type="button" style="margin: 10px;" class="btn btn-primary" data-toggle="modal"
+                data-target="#pvdmodel"> Uplode Video </button>
+        </div>
+        <div>
+            <button type="button" style="margin: 10px;" class="btn btn-primary" data-toggle="modal"
+                data-target="#numbers"> Add Phone Numbers </button>
+        </div>
+        {% else %}
+        <div>
+            <button type="button" style="margin: 10px;" class="btn btn-primary" data-toggle="modal"
+                data-target="#vdmodel"> Uplode Video </button>
+        </div>
+        {% endif %}
+    </section>
+    <section id="videos">
+        {% for video in videos %}
+        <a style="text-decoration: none;" href="/play/{{video.slug}}">
+            <div id="videosdiv">
+                <img src="{{video.video_thumbnail.url}}">
+                <div>
+                    <div>{{video.video_title}}</div>
+                    <div>{{video.video_duration}}</div>
+                    <div>{{video.cid}}</div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </section>
+    <!-- Video uplode model -->
+    <div class="modal fade" id="vdmodel" tabindex="-1" aria-labelledby="vdmodel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: rgb(24, 24, 24);" id="vdmodelTitle">Uplode Video</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="vdform" method="post" action="/uplodevideo/g" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label style="color:rgb(24, 24, 24);">Channel : </label> <select
+                                style="color:rgb(24, 24, 24);" name="channel" id="channel">
+                                <option style="color:rgb(24, 24, 24);" value="{{cname}}">{{cname}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label
+                                style="color:rgb(24, 24, 24); margin-bottom: 2px; display: flex; justify-content: center;">
+                                Uplode_Video</label>
+                            <input type="file" style="margin-bottom: 16px;" required class="form-control" id="video"
+                                name="video">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" style="margin-bottom: 16px;" required class="form-control" id="vtitle"
+                                name="vtitle" placeholder="Video_Title">
+                        </div>
+                        <div class="form-group">
+                            <textarea name="vdisc" style="margin-bottom: 16px;" id="vdisc" cols="30" rows="3" required
+                                class="form-control" placeholder="Video_Discription"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label
+                                style="color:rgb(24, 24, 24); margin-bottom: 2px; display: flex; justify-content: center;">
+                                Thumb-nail</label>
+                            <input type="file" style="margin-bottom: 19px;" required class="form-control" id="vthumb"
+                                name="vthumb">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 30px;">
+                            <label style="color:rgb(24, 24, 24);">Select Catogery : </label> 
+                            <select style="color:rgb(24, 24, 24);" name="Catogery" id="Catogery">
+                                <option style="color:rgb(24, 24, 24);" value="#">Choose</option>
+                                <option style="color:rgb(24, 24, 24);" value="Music">Music</option>
+                                <option style="color:rgb(24, 24, 24);" value="Education">Education</option>
+                                <option style="color:rgb(24, 24, 24);" value="Entertainment">Entertainment</option>
+                                <option style="color:rgb(24, 24, 24);" value="Automobile">Automobile</option>
+                                <option style="color:rgb(24, 24, 24);" value="News">News</option>
+                                <option style="color:rgb(24, 24, 24);" value="Astrology">Astrology</option>
+                                <option style="color:rgb(24, 24, 24);" value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary"> Uplode </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- private Video uplode model -->
+    <div class="modal fade" id="pvdmodel" tabindex="-1" aria-labelledby="pvdmodel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: rgb(24, 24, 24);" id="vdmodelTitle">Uplode Video</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="pvdform" method="post" action="/uplodevideo/p" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label style="color:rgb(24, 24, 24);">Channel : </label> <select
+                                style="color:rgb(24, 24, 24);" name="channel" id="channel">
+                                <option style="color:rgb(24, 24, 24);" value="{{cname}}">{{cname}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label
+                                style="color:rgb(24, 24, 24); margin-bottom: 2px; display: flex; justify-content: center;">
+                                Uplode_Video</label>
+                            <input type="file" style="margin-bottom: 16px;" required class="form-control" id="video"
+                                name="video">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" style="margin-bottom: 16px;" required class="form-control" id="vtitle"
+                                name="vtitle" placeholder="Video_Title">
+                        </div>
+                        <div class="form-group">
+                            <textarea name="vdisc" style="margin-bottom: 16px;" id="vdisc" cols="30" rows="3" required
+                                class="form-control" placeholder="Video_Discription"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label
+                                style="color:rgb(24, 24, 24); margin-bottom: 2px; display: flex; justify-content: center;">
+                                Thumb-nail</label>
+                            <input type="file" style="margin-bottom: 19px;" required class="form-control" id="vthumb"
+                                name="vthumb">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 30px;">
+                            <label style="color:rgb(24, 24, 24);">Select Catogery : </label> 
+                            <select style="color:rgb(24, 24, 24);" name="Catogery" id="Catogery">
+                                <option style="color:rgb(24, 24, 24);" value="#">Choose</option>
+                                <option style="color:rgb(24, 24, 24);" value="Music">Music</option>
+                                <option style="color:rgb(24, 24, 24);" value="Education">Education</option>
+                                <option style="color:rgb(24, 24, 24);" value="Entertainment">Entertainment</option>
+                                <option style="color:rgb(24, 24, 24);" value="Automobile">Automobile</option>
+                                <option style="color:rgb(24, 24, 24);" value="News">News</option>
+                                <option style="color:rgb(24, 24, 24);" value="Astrology">Astrology</option>
+                                <option style="color:rgb(24, 24, 24);" value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary"> Uplode </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+     <!-- Add numbers model -->
+    <div class="modal fade" id="numbers" tabindex="-1" aria-labelledby="numbers" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: rgb(24, 24, 24);" id="vdmodelTitle">Uplode Number</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="numberform" method="post" action="/uplodenumber" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label style="color:rgb(24, 24, 24);">Channel : </label> <select
+                                style="color:rgb(24, 24, 24);" name="channel" id="channel">
+                                <option style="color:rgb(24, 24, 24);" value="{{cname}}">{{cname}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label style="color:rgb(24, 24, 24);">Username : </label> <select
+                                style="color:rgb(24, 24, 24);" name="uid" id="uid">
+                                <option style="color:rgb(24, 24, 24);" value="{{username}}">{{username}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" style="margin-bottom: 16px;" required class="form-control" id="phone_number"
+                                name="phone_number" placeholder="Phone_number">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary"> Uplode </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- Bootstrap JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
+
+</html>

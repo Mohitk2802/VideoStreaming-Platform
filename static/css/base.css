@@ -1,0 +1,131 @@
+*{
+    color: aliceblue;
+    margin: 0px;
+    padding: 0px;
+}
+body{
+    background-color: rgb(24, 24, 24);
+    overflow-x:hidden;
+}
+#nav{
+   background-color: rgb(24, 24, 24);
+   display: flex;
+   align-items: center;
+   margin-left: 1.2vmax;
+   position: sticky;
+   top: 9px;
+   padding-bottom: 10px;
+}
+#ham>img{
+    width: 2.4vmax;
+}
+#l{
+    width: 11vmax;
+    margin-left:1.9vmax ;
+}
+#search{
+    margin-left: 22vmax;
+}
+#search>form>input{
+    background-color: rgba(12, 12, 12, 0);
+    width: 25vmax;
+    border-bottom-left-radius: 1vmax;
+    border-top-left-radius: 1vmax;
+    border: 1.5px solid rgb(66, 65, 65);
+    padding: .5vmax;
+    outline: none;
+}
+#search>form>button{
+    background-color: rgb(66, 65, 65);
+    border: 1.5px solid rgb(66, 65, 65);
+    border-bottom-right-radius: 1vmax;
+    border-top-right-radius: 1vmax;
+    padding: .5vmax;
+    width: 60px;
+    display: inline-block;
+    outline: none;
+}
+#search>form>button:hover{
+    background-color: rgb(55, 54, 54);
+    border: 1.5px solid rgb(55, 54, 54);
+}
+#firstsec{
+    display: flex;
+}
+#leftfix{
+    margin-left: .7vmax;
+    height: 100vh;
+    float:left;
+}
+#leftfix>div>img{
+    width: 3.6vmax;
+}
+#verify{
+    width: 3.6vmax;
+    height: 3.6vmax;
+    border-radius: 6px;
+    background-color: rgba(112, 110, 110, 0.799); 
+    font-size: .7rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+#subscription{
+    min-width: 3.6vmax;
+    height: 3.6vmax;
+    border-radius: 6px;
+    background-color: rgba(112, 110, 110, 0.799); 
+    font-size: .7rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+#verify>button{
+    background-color: rgba(240, 248, 255, 0);
+    border: none;
+}
+
+#leftfix>div{
+    margin-top: 2vmax;
+    transition: all .5s;
+}
+#leftfix>div:hover{
+    transform: translateY(-4.5px);
+    transition: all .5s;
+}
+#rightfix {
+    width: 90vmax;
+    margin: 20px;
+}
+#slside{
+    margin-left: 13.6vmax;
+}
+.slbutton{
+    width: 90px;
+    padding: 5px;
+    border: 2px solid rgba(248, 112, 88, 0.724);
+    border-radius: 6px;
+    background-color: rgba(240, 248, 255, 0);
+    margin-right: .6vmax;
+    outline: none;
+}
+.slbutton:focus{
+    outline: none;
+}
+.slbutton:hover{
+    background-color: rgba(55, 56, 57, 0.692);
+
+}
+.modal-title{
+    color: rgb(57, 52, 52);
+}
+#haschannelimg{
+    width: 45px;
+    border-radius: 25px;
+    padding: 5.9px;
+}
+::-webkit-scrollbar {
+    display: none;
+}
